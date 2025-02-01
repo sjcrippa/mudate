@@ -1,7 +1,8 @@
 "use client";
 
-import { createElement, useState } from "react";
 import { motion } from "framer-motion";
+import { createElement, useState } from "react";
+
 import {
   CookingPotIcon as Kitchen,
   Sofa,
@@ -14,12 +15,12 @@ import {
   LucideIcon,
   Trash,
 } from "lucide-react";
-
-import type { Item, Category } from "@/types/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useItems } from "@/context/provider";
+import type { Category } from "@/types/types";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { updateItem, deleteItem } from "@/app/actions/actions";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type CategoryIcon = {
   [key: string]: LucideIcon;
@@ -37,13 +38,12 @@ const categoryIcons: CategoryIcon = {
 };
 
 export default function CategoryList({
-  items,
   categories,
 }: {
-  items: Item[];
   categories: Category[];
 }) {
   const [filter, setFilter] = useState("todos");
+  const { items, setItems } = useItems();
 
   const filteredCategories =
     filter === "todos"
@@ -51,11 +51,13 @@ export default function CategoryList({
       : categories.filter((cat) => cat.id === filter);
 
   const handleToggle = async (id: string, completed: boolean) => {
-    await updateItem(id, completed);
+    const updatedItems = await updateItem(id, completed);
+    setItems(updatedItems);
   };
 
   const handleDelete = async (id: string) => {
-    await deleteItem(id);
+    const updatedItems = await deleteItem(id);
+    setItems(updatedItems);
   };
 
   return (
@@ -77,7 +79,7 @@ export default function CategoryList({
             >
               <div className="flex gap-4 items-center">
                 <IconComponent className="w-6 h-6" />
-                <h3 className="font-semibold text-center">{cat.name}</h3>
+                <span>{cat.name}</span>
               </div>
             </motion.div>
           );
@@ -92,12 +94,9 @@ export default function CategoryList({
           >
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center space-x-2 uppercase text-black">
-                {createElement(
-                  categoryIcons[category.id.toLowerCase()] || Package,
-                  {
-                    className: "w-6 h-6",
-                  }
-                )}
+                {createElement(categoryIcons[category.id] || Package, {
+                  className: "w-6 h-6",
+                })}
                 <span>{category.name}</span>
               </CardTitle>
             </CardHeader>

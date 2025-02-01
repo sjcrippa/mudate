@@ -32,14 +32,17 @@ export async function addItem(name: string, category: string) {
   };
   items.push(newItem);
   revalidatePath("/");
+  return newItem;
 }
 
 export async function updateItem(id: string, completed: boolean) {
   items = items.map((item) => (item.id === id ? { ...item, completed } : item));
   revalidatePath("/");
+  return items;
 }
 
 export async function deleteItem(id: string) {
   items = items.filter((item) => item.id !== id);
   revalidatePath("/");
+  return items;
 }

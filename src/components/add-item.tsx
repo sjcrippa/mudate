@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addItem } from "@/app/actions/actions";
-import type { Category } from "@/types/types";
-import { Button } from "@/components/ui/button";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,6 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useItems } from "@/context/provider";
+import { Button } from "@/components/ui/button";
+import { addItem } from "@/app/actions/actions";
+import type { Category, Item } from "@/types/types";
 
 export default function AddItemForm({
   categories,
@@ -20,11 +22,13 @@ export default function AddItemForm({
 }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState(categories[0].id);
+  const { setItems } = useItems();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      await addItem(name, category);
+      const newItem = await addItem(name, category);
+      setItems((prevItems: Item[]) => [...prevItems, newItem]);
       setName("");
     }
   };
