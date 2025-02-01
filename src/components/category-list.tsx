@@ -31,29 +31,34 @@ export default function CategoryList({
 
   return (
     <div>
-      <div className="mb-4 flex justify-center gap-2">
-        <Button
-          variant={filter === "all" ? "default" : "outline"}
-          onClick={() => setFilter("all")}
-        >
-          Todos
-        </Button>
-        {categories.map((cat) => (
+      <div className="max-w-2xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
           <Button
-            key={cat.id}
-            variant={filter === cat.id ? "default" : "outline"}
-            onClick={() => setFilter(cat.id)}
-            className={`${cat.color} text-gray-800`}
+            variant={filter === "all" ? "default" : "outline"}
+            onClick={() => setFilter("all")}
+            className="px-4 py-2 rounded-full transition-transform hover:scale-105"
           >
-            {cat.name}
+            Todos
           </Button>
-        ))}
+          {categories.map((cat) => (
+            <Button
+              key={cat.id}
+              variant={filter === cat.id ? "default" : "outline"}
+              onClick={() => setFilter(cat.id)}
+              className={`px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all hover:scale-105`}
+            >
+              {cat.name}
+            </Button>
+          ))}
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCategories.map((category) => (
           <Card key={category.id} className={`${category.color}`}>
             <CardHeader>
-              <CardTitle>{category.name}</CardTitle>
+              <CardTitle className="text-black uppercase">
+                {category.name}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { updateItem, deleteItem } from "@/app/actions/actions";
+
 import type { Item, Category } from "@/types/types";
+import { updateItem, deleteItem } from "@/app/actions/actions";
 
 export default function ItemList({
   items,
