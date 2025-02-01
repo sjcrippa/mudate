@@ -5,7 +5,7 @@ import type { Item, Category } from "@/types/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { updateItem, deleteItem } from "../actions";
+import { updateItem, deleteItem } from "@/app/actions/actions";
 
 export default function CategoryList({
   items,
