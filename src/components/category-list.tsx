@@ -1,11 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { createElement, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  CookingPotIcon as Kitchen,
+  Sofa,
+  Bed,
+  Bath,
+  Package,
+  Waves,
+  Lightbulb,
+  Flower2,
+  LucideIcon,
+  Trash,
+} from "lucide-react";
+
 import type { Item, Category } from "@/types/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { updateItem, deleteItem } from "@/app/actions/actions";
+
+type CategoryIcon = {
+  [key: string]: LucideIcon;
+};
+
+const categoryIcons: CategoryIcon = {
+  "0": Package,
+  "1": Kitchen,
+  "2": Sofa,
+  "3": Bed,
+  "4": Bath,
+  "5": Waves,
+  "6": Lightbulb,
+  "7": Flower2,
+};
 
 export default function CategoryList({
   items,
@@ -14,10 +43,10 @@ export default function CategoryList({
   items: Item[];
   categories: Category[];
 }) {
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("todos");
 
   const filteredCategories =
-    filter === "all"
+    filter === "todos"
       ? categories
       : categories.filter((cat) => cat.id === filter);
 
@@ -31,33 +60,45 @@ export default function CategoryList({
 
   return (
     <div>
-      <div className="max-w-2xl mx-auto">
-        <div className="flex flex-wrap justify-center gap-2 mb-6">
-          <Button
-            variant={filter === "all" ? "default" : "outline"}
-            onClick={() => setFilter("all")}
-            className="px-4 py-2 rounded-full transition-transform hover:scale-105"
-          >
-            Todos
-          </Button>
-          {categories.map((cat) => (
-            <Button
+      <div className="mb-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {[{ id: "todos", name: "Todos" }, ...categories].map((cat) => {
+          const IconComponent = categoryIcons[cat.id] || Package;
+          return (
+            <motion.div
               key={cat.id}
-              variant={filter === cat.id ? "default" : "outline"}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setFilter(cat.id)}
-              className={`px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all hover:scale-105`}
+              className={`cursor-pointer rounded-xl p-4 ${
+                filter === cat.id
+                  ? "bg-primary text-primary-foreground shadow-lg transform -translate-y-1"
+                  : "bg-secondary hover:bg-secondary/90"
+              }`}
             >
-              {cat.name}
-            </Button>
-          ))}
-        </div>
+              <div className="flex gap-4 items-center">
+                <IconComponent className="w-6 h-6" />
+                <h3 className="font-semibold text-center">{cat.name}</h3>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCategories.map((category) => (
-          <Card key={category.id} className={`${category.color}`}>
-            <CardHeader>
-              <CardTitle className="text-black uppercase">
-                {category.name}
+          <Card
+            key={category.id}
+            className={`${category.color} overflow-hidden shadow-lg`}
+          >
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center space-x-2 uppercase text-black">
+                {createElement(
+                  categoryIcons[category.id.toLowerCase()] || Package,
+                  {
+                    className: "w-6 h-6",
+                  }
+                )}
+                <span>{category.name}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -65,12 +106,16 @@ export default function CategoryList({
                 {items
                   .filter((item) => item.category === category.id)
                   .map((item) => (
-                    <li
+                    <motion.li
                       key={item.id}
-                      className="flex items-center justify-between"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="flex items-center text-black justify-between bg-white bg-opacity-50 backdrop-blur-sm rounded-md p-2"
                     >
                       <div className="flex items-center space-x-2">
                         <Checkbox
+                          className="border-black"
                           checked={item.completed}
                           onCheckedChange={(checked) =>
                             handleToggle(item.id, checked as boolean)
@@ -85,9 +130,9 @@ export default function CategoryList({
                         size="sm"
                         onClick={() => handleDelete(item.id)}
                       >
-                        Eliminar
+                        <Trash className="w-4 h-4" />
                       </Button>
-                    </li>
+                    </motion.li>
                   ))}
               </ul>
             </CardContent>

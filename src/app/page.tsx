@@ -8,7 +8,7 @@ export default async function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold mb-8 text-center">Mi Mudanza</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">ME MUDO</h1>
       <AddItemForm categories={categories} />
       <CategoryList items={items} categories={categories} />
     </div>
