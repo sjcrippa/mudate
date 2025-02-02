@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 
 import "./globals.css";
 import StateProvider from "@/context/provider";
+import { FilterProvider } from "@/context/filter-context";
 import { getItems } from "./actions/actions";
 
 const montserrat = Montserrat({
@@ -24,11 +25,15 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <StateProvider initialItems={initialItems}>
-        <body className={`${montserrat.variable} antialiased dark`}>
-          {children}
-        </body>
-      </StateProvider>
+      <body className={`${montserrat.variable} antialiased dark`}>
+        <StateProvider initialItems={initialItems}>
+          <FilterProvider>
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </FilterProvider>
+        </StateProvider>
+      </body>
     </html>
   );
 }

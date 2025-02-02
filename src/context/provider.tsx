@@ -32,17 +32,22 @@ export default function StateProvider({
   children: React.ReactNode;
   initialItems: Item[];
 }) {
-  const [items, setItems] = useState<Item[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("items");
-      return saved ? JSON.parse(saved) : initialItems;
-    }
-    return initialItems;
-  });
+  const [items, setItems] = useState<Item[]>(initialItems);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("items", JSON.stringify(items));
-  }, [items]);
+    const saved = localStorage.getItem("items");
+    if (saved) {
+      setItems(JSON.parse(saved));
+    }
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem("items", JSON.stringify(items));
+    }
+  }, [items, isHydrated]);
 
   return (
     <StateContext.Provider value={{ items, setItems }}>
