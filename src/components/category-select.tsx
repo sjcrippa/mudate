@@ -14,7 +14,7 @@ export default function CategorySelect({ categories }: CategorySelectProps) {
   const { filter, setFilter } = useFilter();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid grid-cols-2 gap-4 ">
       {[{ id: "todos", name: "Todos" }, ...categories].map((cat) => {
         const IconComponent = categoryIcons[cat.id] || Package;
         return (

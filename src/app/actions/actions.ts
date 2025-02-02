@@ -2,18 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { Item, Category } from "@/types/types";
+import type { Item } from "@/types/types";
+import { categories } from "@/constants/categories";
 
 let items: Item[] = [];
-const categories: Category[] = [
-  { id: "1", name: "Cocina", color: "bg-red-200" },
-  { id: "2", name: "Living", color: "bg-blue-200" },
-  { id: "3", name: "Dormitorio", color: "bg-purple-200" },
-  { id: "4", name: "Baño", color: "bg-yellow-200" },
-  { id: "5", name: "Lavadero", color: "bg-cyan-200" },
-  { id: "6", name: "Electricidad", color: "bg-orange-200" },
-  { id: "7", name: "Plantas", color: "bg-green-300" },
-];
 
 export async function getItems() {
   return items;
