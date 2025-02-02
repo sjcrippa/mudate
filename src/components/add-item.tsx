@@ -39,7 +39,7 @@ export default function AddItemForm({
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Nuevo item"
+        placeholder="¿Qué necesito?"
         className="flex-grow"
       />
       <Select value={category} onValueChange={setCategory}>
