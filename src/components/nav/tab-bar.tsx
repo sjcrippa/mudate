@@ -25,7 +25,7 @@ export default function TabBar({ categories }: { categories: Category[] }) {
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t bg-background active:bg-secondary">
       <Sheet>
-        <SheetTrigger className="w-full uppercase font-bold p-2">
+        <SheetTrigger className="w-full uppercase font-bold p-4 text-xl">
           Categorías
         </SheetTrigger>
         <SheetContents categories={categories} />

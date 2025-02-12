@@ -20,9 +20,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <FilterContext.Provider value={value}>
-      {children}
-    </FilterContext.Provider>
+    <FilterContext.Provider value={value}>{children}</FilterContext.Provider>
   );
 }
 

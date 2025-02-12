@@ -35,17 +35,33 @@ export default function StateProvider({
   const [items, setItems] = useState<Item[]>(initialItems);
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Cargar items del localStorage al inicio
   useEffect(() => {
-    const saved = localStorage.getItem("items");
-    if (saved) {
-      setItems(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem("items");
+      if (saved) {
+        const parsedItems = JSON.parse(saved);
+        if (Array.isArray(parsedItems) && parsedItems.length > 0) {
+          setItems(parsedItems);
+        } else {
+          setItems(initialItems);
+        }
+      }
+    } catch (error) {
+      console.error("Error al cargar items:", error);
+      setItems(initialItems);
     }
     setIsHydrated(true);
-  }, []);
+  }, [initialItems]);
 
+  // Guardar items en localStorage cuando cambien
   useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem("items", JSON.stringify(items));
+    if (isHydrated && items.length > 0) {
+      try {
+        localStorage.setItem("items", JSON.stringify(items));
+      } catch (error) {
+        console.error("Error al guardar items:", error);
+      }
     }
   }, [items, isHydrated]);
 

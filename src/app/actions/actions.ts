@@ -5,10 +5,11 @@ import { revalidatePath } from "next/cache";
 import type { Item } from "@/types/types";
 import { categories } from "@/constants/categories";
 
-let items: Item[] = [];
+// Usar un Map para mantener los items en memoria
+const itemsStore = new Map<string, Item>();
 
 export async function getItems() {
-  return items;
+  return Array.from(itemsStore.values());
 }
 
 export async function getCategories() {
@@ -22,19 +23,23 @@ export async function addItem(name: string, category: string) {
     category,
     completed: false,
   };
-  items.push(newItem);
+  itemsStore.set(newItem.id, newItem);
   revalidatePath("/");
   return newItem;
 }
 
 export async function updateItem(id: string, completed: boolean) {
-  items = items.map((item) => (item.id === id ? { ...item, completed } : item));
+  const item = itemsStore.get(id);
+  if (item) {
+    const updatedItem = { ...item, completed };
+    itemsStore.set(id, updatedItem);
+  }
   revalidatePath("/");
-  return items;
+  return Array.from(itemsStore.values());
 }
 
 export async function deleteItem(id: string) {
-  items = items.filter((item) => item.id !== id);
+  itemsStore.delete(id);
   revalidatePath("/");
-  return items;
+  return Array.from(itemsStore.values());
 }

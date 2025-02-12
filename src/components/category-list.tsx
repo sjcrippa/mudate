@@ -1,17 +1,18 @@
 "use client";
 
+import { Package, Trash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createElement, useEffect, useState } from "react";
-import { Package, Trash } from "lucide-react";
-import { useItems } from "@/context/provider";
-import { useFilter } from "@/context/filter-context";
-import type { Category, Item } from "@/types/types";
+
 import categoryIcons from "@/constants/icons";
+import { useItems } from "@/context/provider";
 import { Button } from "@/components/ui/button";
+import { getCategoryColor } from "@/utils/colors";
+import type { Category, Item } from "@/types/types";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useFilter } from "@/context/filter-context";
 import { updateItem, deleteItem } from "@/app/actions/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCategoryColor } from "@/utils/colors";
 
 interface ItemListProps {
   items: Item[];
@@ -32,7 +33,7 @@ function StaticItem({
   onDelete,
 }: { item: Item } & Pick<ItemListProps, "onToggle" | "onDelete">) {
   return (
-    <li className="flex items-center text-black justify-between bg-white bg-opacity-50 backdrop-blur-sm rounded-md p-2">
+    <li className="flex items-center text-black justify-between bg-white bg-opacity-60 backdrop-blur-sm rounded-md p-2">
       <div className="flex items-center space-x-2">
         <Checkbox
           className="border-black"
