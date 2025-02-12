@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { updateItem, deleteItem } from "@/app/actions/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCategoryColor } from "@/utils/colors";
 
 interface ItemListProps {
   items: Item[];
@@ -25,7 +26,11 @@ interface CategoryCardProps {
   onDelete: (id: string) => void;
 }
 
-function StaticItem({ item, onToggle, onDelete }: { item: Item } & Pick<ItemListProps, 'onToggle' | 'onDelete'>) {
+function StaticItem({
+  item,
+  onToggle,
+  onDelete,
+}: { item: Item } & Pick<ItemListProps, "onToggle" | "onDelete">) {
   return (
     <li className="flex items-center text-black justify-between bg-white bg-opacity-50 backdrop-blur-sm rounded-md p-2">
       <div className="flex items-center space-x-2">
@@ -38,11 +43,7 @@ function StaticItem({ item, onToggle, onDelete }: { item: Item } & Pick<ItemList
           {item.name}
         </span>
       </div>
-      <Button
-        variant="destructive"
-        size="sm"
-        onClick={() => onDelete(item.id)}
-      >
+      <Button variant="destructive" size="sm" onClick={() => onDelete(item.id)}>
         <Trash className="w-4 h-4" />
       </Button>
     </li>
@@ -58,7 +59,7 @@ function ItemList({ items, onToggle, onDelete }: ItemListProps) {
 
   return (
     <ul className="space-y-2">
-      {items.map((item) => (
+      {items.map((item) =>
         isMounted ? (
           <AnimatePresence key={item.id} mode="wait">
             <motion.div
@@ -66,11 +67,7 @@ function ItemList({ items, onToggle, onDelete }: ItemListProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <StaticItem
-                item={item}
-                onToggle={onToggle}
-                onDelete={onDelete}
-              />
+              <StaticItem item={item} onToggle={onToggle} onDelete={onDelete} />
             </motion.div>
           </AnimatePresence>
         ) : (
@@ -81,16 +78,24 @@ function ItemList({ items, onToggle, onDelete }: ItemListProps) {
             onDelete={onDelete}
           />
         )
-      ))}
+      )}
     </ul>
   );
 }
 
-function CategoryCard({ category, items, onToggle, onDelete }: CategoryCardProps) {
+function CategoryCard({
+  category,
+  items,
+  onToggle,
+  onDelete,
+}: CategoryCardProps) {
   const filteredItems = items.filter((item) => item.category === category.id);
 
   return (
-    <Card key={category.id} className={`${category.color} overflow-hidden shadow-lg`}>
+    <Card
+      key={category.id}
+      className={`${getCategoryColor(category.id)} overflow-hidden shadow-lg`}
+    >
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2 uppercase text-black">
           {createElement(categoryIcons[category.id] || Package, {
@@ -100,7 +105,7 @@ function CategoryCard({ category, items, onToggle, onDelete }: CategoryCardProps
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ItemList 
+        <ItemList
           items={filteredItems}
           onToggle={onToggle}
           onDelete={onDelete}
