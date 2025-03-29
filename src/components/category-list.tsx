@@ -135,8 +135,13 @@ export default function CategoryList({
   };
 
   const handleDelete = async (id: string) => {
-    const updatedItems = await deleteItem(id);
-    setItems(updatedItems);
+    try {
+      const updatedItems = await deleteItem(id);
+      setItems(updatedItems);
+    } catch (error) {
+      console.error("Error al eliminar el item:", error);
+      // Aquí podrías agregar una notificación de error si lo deseas
+    }
   };
 
   return (
