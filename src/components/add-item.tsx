@@ -10,10 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useItems } from "@/context/provider";
 import { Button } from "@/components/ui/button";
 import { addItem } from "@/app/actions/actions";
-import type { Category, Item } from "@/types/types";
+import type { Category } from "@/types/types";
+import { useItemsStore } from "@/store/items";
 
 export default function AddItemForm({
   categories,
@@ -22,13 +22,13 @@ export default function AddItemForm({
 }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState(categories[0].id);
-  const { setItems } = useItems();
+  const addItemToStore = useItemsStore((state) => state.addItem);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
       const newItem = await addItem(name, category);
-      setItems((prevItems: Item[]) => [...prevItems, newItem]);
+      addItemToStore(newItem);
       setName("");
     }
   };

@@ -4,15 +4,18 @@ import { Package, Trash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createElement, useEffect, useState } from "react";
 
+import { useItemsStore } from "@/store/items";
 import categoryIcons from "@/constants/icons";
-import { useItems } from "@/context/provider";
+import type { Category } from "@/types/types";
 import { Button } from "@/components/ui/button";
-import type { Category, Item } from "@/types/types";
+import { getCategoryColor } from "@/utils/colors";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useFilter } from "@/context/filter-context";
-import { updateItem, deleteItem } from "@/app/actions/actions";
+import type { Database } from "@/types/database.types";
+import { updateItem, deleteItem, getItems } from "@/app/actions/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCategoryColor } from "@/utils/colors";
+
+type Item = Database["public"]["Tables"]["items"]["Row"];
 
 interface ItemListProps {
   items: Item[];
@@ -123,7 +126,20 @@ export default function CategoryList({
   categories: Category[];
 }) {
   const { filter } = useFilter();
-  const { items, setItems } = useItems();
+  const {
+    items,
+    setItems,
+    updateItem: updateStoreItem,
+    removeItem,
+  } = useItemsStore();
+
+  useEffect(() => {
+    const loadItems = async () => {
+      const items = await getItems();
+      setItems(items);
+    };
+    loadItems();
+  }, [setItems]);
 
   const filteredCategories =
     filter === "todos"
@@ -133,15 +149,16 @@ export default function CategoryList({
   const handleToggle = async (id: string, completed: boolean) => {
     const updatedItems = await updateItem(id, completed);
     setItems(updatedItems);
+    updateStoreItem(id, completed);
   };
 
   const handleDelete = async (id: string) => {
     try {
       const updatedItems = await deleteItem(id);
       setItems(updatedItems);
+      removeItem(id);
     } catch (error) {
       console.error("Error al eliminar el item:", error);
-      // Aquí podrías agregar una notificación de error si lo deseas
     }
   };
 

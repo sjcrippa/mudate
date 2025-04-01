@@ -1,15 +1,29 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
-import type { Item } from "@/types/types";
+import { createClient } from "@/db/supabase/server";
 import { categories } from "@/constants/categories";
+import type { Database } from '@/types/database.types';
 
-// Usar un Map para mantener los items en memoria
-const itemsStore = new Map<string, Item>();
+type Item = Database['public']['Tables']['items']['Row'];
 
 export async function getItems() {
-  return Array.from(itemsStore.values());
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return [];
+
+  const { data: items, error } = await supabase
+    .from('items')
+    .select('*')
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error fetching items:', error);
+    return [];
+  }
+
+  return items;
 }
 
 export async function getCategories() {
@@ -17,29 +31,71 @@ export async function getCategories() {
 }
 
 export async function addItem(name: string, category: string) {
-  const newItem: Item = {
-    id: Date.now().toString(),
-    name,
-    category,
-    completed: false,
-  };
-  itemsStore.set(newItem.id, newItem);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) throw new Error('Usuario no autenticado');
+
+  const { data: newItem, error } = await supabase
+    .from('items')
+    .insert({
+      name,
+      category,
+      completed: false,
+      user_id: user.id
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding item:', error);
+    throw error;
+  }
+
   revalidatePath("/");
-  return newItem;
+  return newItem as Item;
 }
 
 export async function updateItem(id: string, completed: boolean) {
-  const item = itemsStore.get(id);
-  if (item) {
-    const updatedItem = { ...item, completed };
-    itemsStore.set(id, updatedItem);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) throw new Error('Usuario no autenticado');
+
+  const { error } = await supabase
+    .from('items')
+    .update({ completed })
+    .eq('id', id)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error updating item:', error);
+    throw error;
   }
+
+  const items = await getItems();
   revalidatePath("/");
-  return Array.from(itemsStore.values());
+  return items;
 }
 
 export async function deleteItem(id: string) {
-  itemsStore.delete(id);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) throw new Error('Usuario no autenticado');
+
+  const { error } = await supabase
+    .from('items')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error deleting item:', error);
+    throw error;
+  }
+
+  const items = await getItems();
   revalidatePath("/");
-  return Array.from(itemsStore.values());
+  return items;
 }
