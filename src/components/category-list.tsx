@@ -7,12 +7,12 @@ import { createElement, useEffect, useState } from "react";
 import categoryIcons from "@/constants/icons";
 import { useItems } from "@/context/provider";
 import { Button } from "@/components/ui/button";
-import { getCategoryColor } from "@/utils/colors";
 import type { Category, Item } from "@/types/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useFilter } from "@/context/filter-context";
 import { updateItem, deleteItem } from "@/app/actions/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCategoryColor } from "@/utils/colors";
 
 interface ItemListProps {
   items: Item[];
@@ -33,14 +33,14 @@ function StaticItem({
   onDelete,
 }: { item: Item } & Pick<ItemListProps, "onToggle" | "onDelete">) {
   return (
-    <li className="flex items-center text-black justify-between bg-white bg-opacity-60 backdrop-blur-sm rounded-md p-2">
+    <li className="flex items-center text-white justify-between bg-black/20 backdrop-blur-sm rounded-md p-2">
       <div className="flex items-center space-x-2">
         <Checkbox
-          className="border-black"
+          className="border-white"
           checked={item.completed}
           onCheckedChange={(checked) => onToggle(item.id, checked as boolean)}
         />
-        <span className={item.completed ? "line-through" : ""}>
+        <span className={item.completed ? "line-through" : "font-bold"}>
           {item.name}
         </span>
       </div>
@@ -95,7 +95,8 @@ function CategoryCard({
   return (
     <Card
       key={category.id}
-      className={`${getCategoryColor(category.id)} overflow-hidden shadow-lg`}
+      style={{ backgroundColor: getCategoryColor(category.id) }}
+      className="overflow-hidden shadow-lg"
     >
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2 uppercase text-black">
