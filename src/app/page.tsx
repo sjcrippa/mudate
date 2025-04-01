@@ -1,10 +1,11 @@
+import { redirect } from "next/navigation";
+
+import TabBar from "@/components/nav/tab-bar";
+import Logout from "@/components/auth/logout";
 import AddItemForm from "@/components/add-item";
+import { createClient } from "@/db/supabase/server";
 import CategoryList from "@/components/category-list";
 import { getCategories } from "@/app/actions/actions";
-import TabBar from "@/components/nav/tab-bar";
-import { createClient } from "@/db/supabase/server";
-import { redirect } from "next/navigation";
-import Logout from "@/components/auth/logout";
 
 export default async function Home() {
   const categories = await getCategories();
