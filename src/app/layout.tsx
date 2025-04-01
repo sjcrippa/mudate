@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
@@ -23,7 +24,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${montserrat.variable} antialiased dark`}>
         <FilterProvider>
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Toaster richColors position="top-center" />
         </FilterProvider>
       </body>
     </html>
